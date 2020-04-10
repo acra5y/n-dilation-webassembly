@@ -21,7 +21,7 @@ func testUnitaryNDilation(test *testing.T, expectedT *mat.Dense, expectedN int, 
     }
 }
 
-func TestDilationHandlerPost(t *testing.T) {
+func TestUnitaryNDilationHandlerPost(t *testing.T) {
     tables := []struct {
         desc string
 		value []float64
@@ -76,7 +76,7 @@ func TestDilationHandlerPost(t *testing.T) {
         t.Run(table.desc, func(t *testing.T) {
 			t.Parallel()
 
-			dilation, err := DilationHandler(testUnitaryNDilation(t, table.expectedT, table.expectedN, table.errorToThrow), table.value, table.degree)
+			dilation, err := UnitaryNDilation(testUnitaryNDilation(t, table.expectedT, table.expectedN, table.errorToThrow))(table.value, table.degree)
 
 			if !reflect.DeepEqual(table.expectedError, err) {
 				t.Errorf("handler returned error: got %v, want %v", err, table.expectedError)

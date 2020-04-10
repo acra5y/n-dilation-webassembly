@@ -31,19 +31,21 @@ func denseToSlice(u *mat.Dense) (data []float64) {
     return
 }
 
-func DilationHandler(dilation unitaryNDilation, value []float64, degree int) ([]float64, error) {
-    err := validatePayload(value, degree)
-    if err != nil {
-        return nil, err
+func UnitaryNDilation(dilation unitaryNDilation) (func (value []float64, degree int) ([]float64, error)) {
+    return func (value []float64, degree int) ([]float64, error) {
+        err := validatePayload(value, degree)
+        if err != nil {
+            return nil, err
+        }
+
+        n := int(math.Sqrt(float64(len(value))))
+        t := mat.NewDense(n, n, value)
+        unitary, e := dilation(t, degree)
+
+        if e != nil {
+            return nil, fmt.Errorf("value must represent a real contraction")
+        }
+
+        return denseToSlice(unitary), nil
     }
-
-    n := int(math.Sqrt(float64(len(value))))
-	t := mat.NewDense(n, n, value)
-    unitary, e := dilation(t, degree)
-
-    if e != nil {
-        return nil, fmt.Errorf("value must represent a real contraction")
-    }
-
-    return denseToSlice(unitary), nil
 }
